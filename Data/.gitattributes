@@ -1,0 +1,6 @@
+Country.csv filter=lfs diff=lfs merge=lfs -text
+CountryNotes.csv filter=lfs diff=lfs merge=lfs -text
+Footnotes.csv filter=lfs diff=lfs merge=lfs -text
+Indicators.csv filter=lfs diff=lfs merge=lfs -text
+Series.csv filter=lfs diff=lfs merge=lfs -text
+SeriesNotes.csv filter=lfs diff=lfs merge=lfs -text

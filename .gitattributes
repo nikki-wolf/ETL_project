@@ -1,0 +1,4 @@
+Data filter=lfs diff=lfs merge=lfs -text
+Final[[:space:]]Report filter=lfs diff=lfs merge=lfs -text
+Instructions filter=lfs diff=lfs merge=lfs -text
+README.md filter=lfs diff=lfs merge=lfs -text
