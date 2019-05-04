@@ -909,7 +909,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 16,
+   "execution_count": 20,
    "metadata": {},
    "outputs": [
     {
@@ -1164,15 +1164,100 @@
        " ('ZWE', 'Sub-Saharan Africa', 'Low income')]"
       ]
      },
-     "execution_count": 16,
+     "execution_count": 20,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
     "# Merging tables\n",
-    "merged_data = engine.execute('SELECT CountryCode, Region, IncomeGroup FROM Country')\n",
+    "merged_data = engine.execute('SELECT CountryCode, Region, IncomeGroup FROM Country').fetchall()\n",
     "[*merged_data]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>AFG</td>\n",
+       "      <td>South Asia</td>\n",
+       "      <td>Low income</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>ALB</td>\n",
+       "      <td>Europe &amp; Central Asia</td>\n",
+       "      <td>Upper middle income</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>DZA</td>\n",
+       "      <td>Middle East &amp; North Africa</td>\n",
+       "      <td>Upper middle income</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>ASM</td>\n",
+       "      <td>East Asia &amp; Pacific</td>\n",
+       "      <td>Upper middle income</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>ADO</td>\n",
+       "      <td>Europe &amp; Central Asia</td>\n",
+       "      <td>High income: nonOECD</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     0                           1                     2\n",
+       "0  AFG                  South Asia            Low income\n",
+       "1  ALB       Europe & Central Asia   Upper middle income\n",
+       "2  DZA  Middle East & North Africa   Upper middle income\n",
+       "3  ASM         East Asia & Pacific   Upper middle income\n",
+       "4  ADO       Europe & Central Asia  High income: nonOECD"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "merged_data_df = pd.DataFrame(merged_data)\n",
+    "merged_data_df.head()"
    ]
   },
   {
