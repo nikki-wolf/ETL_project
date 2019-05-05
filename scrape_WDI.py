@@ -17,8 +17,8 @@ import sqlite3
 # Connecting to the relational database
 # Source: sqlite database from Kaggle Website
 # Path to sqlite
-dbp = "../Data/WDI_Kaggle.sqlite"
-engine = create_engine(f"sqlite:///{dbp}")
+database_path = "Data/wdi_kaggle.sqlite"
+engine = create_engine(f"sqlite:///{database_path}")
 conn=engine.connect()
 for table_name in inspect(engine).get_table_names():
    print(table_name)
@@ -35,9 +35,9 @@ series = set(Series_df.SeriesCode)
 diff_Ind_Series = [x for x in Indicators_df.IndicatorCode if x not in series]
 
 # Now, we merge three DataFrames
-IndCou=Indicators_df.merge(Country_df, left_on='CountryCode', right_on='CountryCode')
-IndCouSer=IndCou.merge(Series_df, left_on='IndicatorCode', right_on='SeriesCode')
-IndCouSer.drop(['SeriesCode'],axis=1)
+Ind_Country=Indicators_df.merge(Country_df, left_on='CountryCode', right_on='CountryCode')
+Ind_Country_Series=Ind_Country.merge(Series_df, left_on='IndicatorCode', right_on='SeriesCode')
+Ind_Country_Series.drop(['SeriesCode'],axis=1)
 
 # First, we tried to directly send the dataframe as a dictionary to the Mongodb. 
 # However, we faced the memory issure (MemoryError below).
@@ -50,15 +50,17 @@ client = MongoClient('mongodb://localhost:27017/')
 dbmongo = client.World_Development_Indicator
 
 fn=0
-ln=len(IndCouSer)
+ln=len(Ind_Country_Series)
 
-IndCouSer_section=IndCouSer[fn:ln]
+Ind_Country_Series_section=Ind_Country_Series[fn:ln]
 nc=100
+
+# import to Mongo DB in chunks 
 
 def chunk(df,x):
     return [ df[i::x] for i in range(x) ]
  
-chunks = chunk(IndCouSer_section, nc)
+chunks = chunk(Ind_Country_Series_section, nc)
 
 col=dbmongo['WDI_general']
 
