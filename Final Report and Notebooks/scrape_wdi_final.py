@@ -4,6 +4,7 @@ from flask_pymongo import PyMongo
 from pymongo import MongoClient
 import numpy as np
 import pandas as pd
+from pandas import read_html
 import datetime as dt
 import pandas as pd
 import json
@@ -64,7 +65,7 @@ Ind_Country_Series.drop(['SeriesCode'],axis=1)
 
 #change pandas dataframe to dictionary
 Ind_Country_Series.to_dict("records")
-
+#_____________________________________________________________________________________
 #connect to mongodb database
 
 #app = Flask(__name__)
@@ -97,6 +98,7 @@ for count,x in enumerate(range(nc)):
 ### At this point, we concluded that thte Jupyter notebook cannot export the very large size dataframe into the Mongodb.
 #  Rather, we started transferring the whole code into a explicit Python file (Scrape_WDI.py).
 
+#-----------------------------------------------------------------------------------
 ## Extracting and Transforming from second Data Source
 
 # Storing filepath in a variable
@@ -131,3 +133,94 @@ carbon_dioxide_col = db.carbon_dioxide
 carbon_dioxide_col.insert_many(result_one.to_dict('records'))
 client.close()
 
+#------------------------------------------------------------------------------
+
+## Loading third data in MongoDB from csv. 
+#### Original data was scraped from two tables in WDI and transformed using Pandas and finally loaded in MongoDB. 
+
+# Scrape from WDI website for global unemployment data
+url="http://wdi.worldbank.org/table/2.5#"
+tables = pd.read_html(url)
+print(f"There are {len(tables)} dataframes in the tables")
+
+# Check there dataframes, the first one is empty
+tables[0]
+
+# The second one 
+tables[1]
+
+# We will use tables[1] as dataframe header
+columns = [list(i) for i in list(tables[1])]
+columns
+
+# Moderate the columns
+columns[0] ="country name"
+for i in range(1,len(columns)):
+    columns[i] = ",".join(columns[i])
+
+# The third dataframe
+tables[2].head()
+
+# Create unemplyment_df 
+unemplyment_df= tables[2]
+unemplyment_df.columns=columns
+
+# Scrape second data table(Education Input) from WDI website
+url = "http://wdi.worldbank.org/table/2.7"
+tables = pd.read_html(url)
+print(f"There are {len(tables)} dataframes in the tables")
+
+# The first dataset is empty
+tables[0]
+
+# The second dataset 
+tables[1] 
+
+# We will use tables[1] as dataframe header
+columns = [list(i) for i in list(tables[1])]
+
+# Modefiled the columns
+columns[0] ="country name"
+columns[7].remove(columns[7][1])
+columns[8].remove(columns[8][1])
+for i in range(1,len(columns)):
+    columns[i] = ",".join(columns[i])
+
+
+# The third dataframes 
+tables[2].head()
+
+# Create education_input_df
+education_input_df = tables[2]
+education_input_df.columns=columns
+
+# Combine two dataset
+education_unemployment_df = education_input_df.merge(unemplyment_df, on='country name',how="outer")
+education_unemployment_df.head()
+
+# Save dataframe as csv files
+education_unemployment_df.to_csv("../Data/education_unemployment.csv", index=False)
+
+#import remaining dependencies 
+import csv
+import sys, getopt, pprint
+
+#CSV to JSON Conversion
+csvfile = open("../Data/education_unemployment.csv", 'r')
+reader = csv.DictReader( csvfile )
+
+# add education_unemployment to the existing World_Development_Indicators
+conn = 'mongodb://localhost:27017'
+mongo_client = MongoClient(conn) 
+db = client.World_Development_Indicator 
+
+# Create a collection" unemployment_educationinput" in database
+db.unemployment_educationinput.drop()
+education_unemployment_df_columns = list(education_unemployment_df)
+header= education_unemployment_df_columns
+for each in reader:
+    row={}
+    for field in header:
+        row[field]=each[field]
+
+    db.unemployment_educationinput.insert_one(row)
