@@ -26,3 +26,7 @@ Note: we opt to apply Pandas DataFrame as a bridge between Sqlite and MongoDB to
 
 Load: export data (tweaked Kaggle tables, CSV files, and scraped tables from World Bank website) to a non-relational database (MongoDB).
 Note: We ould NOT export the genrated but huge Panda dataframe into Mongodb from the Jupyter Notebook environment due to memory issue. As a result, we first sliced the database into 50 chunks and then used a python file (scrape_WDI.py).
+
+To run the code:
+1) connect to a mongodb server (in a terminal > mongod )
+2) run the python file to generate the Mongo database and upload data to it (in a terminal > python scrape_WDI.py)
