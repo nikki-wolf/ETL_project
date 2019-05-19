@@ -25,3 +25,4 @@ Exported sqlite database into three Pandas dataframes where we could easily merg
 Note: we opt to apply Pandas DataFrame as a bridge between Sqlite and MongoDB to manipulate data. The other, and actually more professional approach, could be applied by the tools that are intended for this purpose, such as T3 Studio GUI.
 
 Load: export data (tweaked Kaggle tables, CSV files, and scraped tables from World Bank website) to a non-relational database (MongoDB).
+Note: We ould NOT export the genrated but huge Panda dataframe into Mongodb from the Jupyter Notebook environment due to memory issue. As a result, we first sliced the database into 50 chunks and then used a python file (scrape_WDI.py).
